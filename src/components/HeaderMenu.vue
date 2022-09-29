@@ -54,7 +54,7 @@
                                 <nav>
                                     <ul class="middle-menu-list">
                                         <li><router-link to="/">Главная</router-link></li>
-                                        <li><a href="#">Каталог</a></li>
+                                        <li><router-link to="/shop">Каталог</router-link></li>
                                         <li><a href="#">Корзина</a></li>
                                         <li><router-link to="/about">О нас</router-link></li>
                                         <li><router-link to="/contacts">Контакты</router-link></li>

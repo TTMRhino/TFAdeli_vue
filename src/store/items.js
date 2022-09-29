@@ -1,6 +1,6 @@
 //import Vue from 'vue'
 import axios from 'axios'
-
+import VueCookies from 'vue-cookies'
 export default {
     state: {
         items: null,
@@ -12,12 +12,21 @@ export default {
     },
     mutations: {
         setItems(state, payload) {
-            console.log("setItems");
+
+
+            const sort = VueCookies.get("sort")
+
+            if (typeof sort == 'undefined' || sort == 'ASC') {
+                payload.data.sort((a, b) => (a.price < b.price) ? 1 : ((b.price < a.price) ? -1 : 0))
+            } else {
+                payload.data.sort((a, b) => (a.price > b.price) ? 1 : ((b.price > a.price) ? -1 : 0))
+            }
+
             state.items = payload.data
             state.paginations = payload.meta //пагинация
             state.paginations.links = payload.links
 
-            //console.log(this.getters);
+
         },
         setLoading(state, paload) {
             state.loading = paload
@@ -28,21 +37,28 @@ export default {
     },
     actions: {
 
-        async asyncGetItems(context) {
+        async asyncGetItems(context, payload) {
             context.commit('setLoading', true)
+
+            if (typeof payload == 'undefined') {
+                payload = {
+                    pageNum: '1'
+                }
+            }
+
             try {
-                console.log("asyncGetItems");
-                const response = await axios.get('http://tfadeli-api.local/api/v1/items')
-                    //console.log(response.data)
+                const response = await axios.get(`http://tfadeli-api.local/api/v1/items?page=${payload.pageNum}`)
 
                 //помещаем items в store              
                 context.commit('setItems', response.data)
                 context.commit('setLoading', false)
 
             } catch (e) {
+                context.commit('setLoading', false)
                 console.error(e)
             }
-        }
+        },
+
     },
     getters: {
         items(state) {
@@ -50,6 +66,9 @@ export default {
         },
         loading(state) {
             return state.loading
+        },
+        paginations(state) {
+            return state.paginations
         }
 
     }

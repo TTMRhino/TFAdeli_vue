@@ -81,15 +81,18 @@
         </div>
         <!-- Best Product Activation Start -->
         <div class="hand-tool-active owl-carousel">
-
-            @for()
-                @if( isset($sale[$i]->id) )
+            
+           
                     <!-- Single Product Start -->
-                    <div class="single-product">
+                    <div class="single-product"
+                        v-for="item in randItems"
+                        :key="item.id"
+                    >
+                   
                         <!-- Product Image Start -->
                         <div class="pro-img">
-                            <a href="{{ route('product',['id' => $sale[$i]->id ] ) }}">
-                                <img class="primary-img" src="storage/img/products/l{{ $sale[$i]->article }}.jpg" alt="single-product">                                    
+                            <a href="#">
+                                <img class="primary-img" :src="BASE_URL + '/storage/img/products/l' + item.article  + '.jpg'" alt="single-product">                                    
                             </a>
                         </div>
                         <!-- Product Image End -->
@@ -97,45 +100,43 @@
                         <div class="pro-content">
                             <div class="product-rating">
                             </div>
-                            <h4><a href="{{ route( 'product',['id' => $sale[$i]->id ] )}}">$sale[$i]->name </a></h4>
-                            <p><span class="price"> $sale[$i]->price руб</span></p>
+                            <h4><a href="#">{{ item.name }}</a></h4>
+                            <p><span class="price"> {{ item.price }} руб</span></p>
                             <div class="pro-actions">
                                 <div class="actions-secondary">
-                                    <a class="add-cart" href="{{ route('add',['id' => $sale[$i]->id]) }}" ata-id="<?= $sale[$i]->id ?>" data-toggle="tooltip" title="Add to Cart">В корзину</a>
+                                    <a class="add-cart" href="#" ata-id="<?= {{ item.id }} ?>" data-toggle="tooltip" title="Add to Cart">В корзину</a>
                                 </div>
                             </div>
                         </div>
                         <!-- Product Content End -->
                     </div>
                     <!-- Single Product End -->
-                @else
+               
                 
-                    <!-- Single Product Start -->
-                    <div class="single-product">
-                        <!-- Product Image Start -->
+                  
+                 <!--   <div class="single-product">
+                       
                         <div class="pro-img">
-                            <a href="{{ route('shop' ) }}">
+                            <a href="#">
                                 <img class="primary-img" src="storage/img/products/8.jpg" alt="single-product">                                    
                             </a>
                         </div>
-                        <!-- Product Image End -->
-                        <!-- Product Content Start -->
+                      
                         <div class="pro-content">
                             <div class="product-rating">
                             </div>
-                            <h4><a href="{{ route('shop' ) }}">Товар 1</a></h4>
+                            <h4><a href="#">Товар 1</a></h4>
                             <p><span class="price">0 руб</span></p>
                             <div class="pro-actions">
                                 <div class="actions-secondary">
-                                    <a class="add-cart" href="{{ route( 'cart' )}}" data-toggle="tooltip" title="Add to Cart">В корзину</a>
+                                    <a class="add-cart" href="#" data-toggle="tooltip" title="Add to Cart">В корзину</a>
                                 </div>
                             </div>
                         </div>
-                        <!-- Product Content End -->
-                    </div>
-                    <!-- Single Product End -->
-                @endif
-            @endfor
+                       
+                    </div>-->
+                 
+               
            
         </div>
         <!-- Best Product Activation End -->
@@ -149,22 +150,22 @@
         <div class="row">
 
            
-               
+              
                 <!-- Single Banner Start -->
-                <div class="col-sm-6">
-                    <div class="single-banner zoom">
-                        <a href="/shop"><img src="img/banner/4.png" alt="slider-banner"></a>
+                <div class="col-sm-6"
+                v-for="item in randItems.data"
+                        :key="item.id"
+                >
+                    <div class="single-banner zoom">                       
+                        <router-link :to="{ name:'', params: { id: item.id} }">
+                           
+                            <img :src="BASE_URL + 'storage/img/products/l' + item.article  + '.jpg'" alt="slider-banner">
+                        </router-link>
                     </div>
                 </div>
                 <!-- Single Banner End --> 
                 
-                <!-- Single Banner Start -->
-                <div class="col-sm-6">
-                    <div class="single-banner zoom">
-                        <a href="/shop"><img src="img/banner/5.png" alt="slider-banner"></a>
-                    </div>
-                </div>
-                <!-- Single Banner End -->
+               
            
 
         </div>
@@ -240,24 +241,41 @@
 </template>
 
 <script>
+import axios from 'axios'
+import {URL} from "@/main";
+import {BASE_URL} from "@/main";
 export default {
  data(){
-    return{}
+    return{
+        randItems: this.asyncgetranItems(),
+        BASE_URL
+    }
  },
  methods:{
-
+    async asyncgetranItems(){
+       
+        try {
+         this.randItems = await axios.get(URL + 'items/rand/randItems')
+         
+    }catch(e) {
+        console.error(e)
+    }
+   
+    }
  },
  computed:{
-    items() {
+    /*items() {
       return this.$store.getters.items;
-    },
+    },*/
  },
  created(){
     //обращаемся в store для вытягиваия items через API
-    this.$store.dispatch("asyncGetItems").then(()=>{
+    /*this.$store.dispatch("asyncGetItems").then(()=>{
         return console.log(this.$store.getters.items )
     }
-    );
+    );*/
+
+    
     
  },
  mounted() {
