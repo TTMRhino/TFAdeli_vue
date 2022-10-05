@@ -12,16 +12,6 @@ export default {
     },
     mutations: {
         setItems(state, payload) {
-
-
-            const sort = VueCookies.get("sort")
-
-            if (typeof sort == 'undefined' || sort == 'ASC') {
-                payload.data.sort((a, b) => (a.price < b.price) ? 1 : ((b.price < a.price) ? -1 : 0))
-            } else {
-                payload.data.sort((a, b) => (a.price > b.price) ? 1 : ((b.price > a.price) ? -1 : 0))
-            }
-
             state.items = payload.data
             state.paginations = payload.meta //пагинация
             state.paginations.links = payload.links
@@ -47,7 +37,11 @@ export default {
             }
 
             try {
-                const response = await axios.get(`http://tfadeli-api.local/api/v1/items?page=${payload.pageNum}`)
+                /** Сортировка */
+                let sort = VueCookies.get("sort")
+                let groupId = VueCookies.get("groupId")
+
+                const response = await axios.get(`http://tfadeli-api.local/api/v1/items?page=${payload.pageNum}&sort=${sort}&groupId=${groupId}`)
 
                 //помещаем items в store              
                 context.commit('setItems', response.data)
@@ -58,6 +52,8 @@ export default {
                 console.error(e)
             }
         },
+
+
 
     },
     getters: {

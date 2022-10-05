@@ -32,7 +32,9 @@
 
                        <!-- Menu Groups --->
 
-                       <span>тут меню</span> 
+                        <span>
+                            <groups-menu> </groups-menu>
+                        </span> 
                        <!-- END Menu Groups -->
 
 
@@ -223,12 +225,13 @@
 import {BASE_URL} from "@/main";
 import paginate from 'vuejs-paginate-next';
 import { HourGlass } from "vue-loading-spinner";
-
+import GroupsMenu from "@/components/GroupsMenu.vue"
 
     export default {
         components: {
             paginate: paginate,
-            HourGlass
+            HourGlass,
+            'groups-menu': GroupsMenu
         },
         data(){
             return{
@@ -256,12 +259,10 @@ import { HourGlass } from "vue-loading-spinner";
             this.meta_page = this.$store.getters.paginations
         },
         methods: {
-            changePage: function (pageNum = 1) {
-                console.log(pageNum);
+            changePage: function (pageNum = 1) {               
 
                 this.$store.dispatch('asyncGetItems',{
-                        pageNum,
-                        method:this.method
+                        pageNum,                       
                         })
             },
 
@@ -270,29 +271,17 @@ import { HourGlass } from "vue-loading-spinner";
             },
 
             sortASC: function (){
-                this.$cookies.set("sort", "ASC") 
-                console.log(`sort-ASC`)
-                console.log(this.$cookies.get("sort"))
+                this.$cookies.set("sort", "ASC")                
+                this.page = 1
                 this.changePage()
             },
             
             sortDESC: function (){
-                this.$cookies.set("sort", "DESC") //value[, expires[, path[, domain[, secure[, sameSite]]]]]
-                console.log(`sort-DESC`)
-                console.log(this.$cookies.get("sort"))
+                this.$cookies.set("sort", "DESC") //value[, expires[, path[, domain[, secure[, sameSite]]]]]               
+                this.page = 1
                 this.changePage()
             }
   },
     }
 </script>
 
-<style lang="css">
-    /* Adopt bootstrap pagination stylesheet. */
-    
-  
-    /* Write your own CSS for pagination */
-    .pagination {
-    }
-    .page-item {
-    }
-</style>
