@@ -44,7 +44,7 @@
                     <div class="row">
                         <div class="col-xl-3 col-lg-2 col-sm-5 col-5">
                             <div class="logo">
-                                <a href="#"><img src="/img/logo/logo.png" alt="logo-image"></a>
+                                <router-link to="/"><img src="/img/logo/logo.png" alt="logo-image"></router-link>
                             </div>
                         </div>
                         <!-- Primary Vertical-Menu End -->
@@ -55,7 +55,7 @@
                                     <ul class="middle-menu-list">
                                         <li><router-link to="/">Главная</router-link></li>
                                         <li><router-link to="/shop">Каталог</router-link></li>
-                                        <li><a href="#">Корзина</a></li>
+                                        <li><router-link to="/cart">Корзина</router-link></li>
                                         <li><router-link to="/about">О нас</router-link></li>
                                         <li><router-link to="/contacts">Контакты</router-link></li>
                                     </ul>
@@ -68,30 +68,40 @@
                             <div class="cart-box text-right">
                                 <ul id="cartBox">
                                     <li>
-                                        <a href="#">
+                                        <router-link to="/cart">
                                             <i class="fa fa-shopping-basket"></i><span class="cart-counter">
 
-                                              NULL
+                                              {{totalQuantity }}
                                         
-                                    </span></a>
+                                    </span></router-link>
                                         
-                                        <ul 
+                                    <ul 
                                         class="ht-dropdown main-cart-box"
-                                        v-if="cartVisible"
-                                        >
+                                        
+                                    >
 
-                                            @foreach($session_cart['cart'] as $item)
-                                            <li>
+                                          <div v-if="totalQuantity">
+                                            <li v-for="item in items"
+                                                :key="item.id"
+                                            >
                                                 <!-- Cart Box Start -->
                                                 <div class="single-cart-box">
                                                     <div class="cart-img">
-                                                        <a href="#"><img src="img/products/l#.jpg" alt="cart-image"></a>
+                                                        <router-link :to="{ name:'DetailPage', params:{id: item.id} }">
+                                                            <img :src=" BASE_URL + '/storage/img/products/l'+  item.article +   '.jpg'" alt="cart-image">
+                                                        </router-link>
                                                     </div>
                                                     <div class="cart-content">
-                                                        <h6><a href="#">name</a></h6>
-                                                        <span> $item['qty']  ×  $item['price'] руб.</span>
+                                                       
+                                                            <h6> <router-link :to="{ name:'DetailPage', params:{id: item.id} }">
+                                                                {{ item.name }}
+                                                            </router-link></h6>
+                                                       
+                                                        <span> {{ item.quantity  *  item.price }} руб.</span>
                                                     </div>
-                                                    <a class="del-icone delete" data-id="{{ $item['id'] }} " href="#">
+                                                    <a class="del-icone delete"  href="#"
+                                                        @click=deleteItem(item)
+                                                    >
                                                         <i class="fa fa-window-close-o"></i>
                                                     </a>
                                                 </div>
@@ -99,12 +109,17 @@
 
                                                 <!-- Cart Footer Inner End -->
                                             </li>
-                                            @endforeach
+                                         
+                                        </div>
+                                        <div v-else> Козина пуста  </div>
+                                    </ul>
+                                    
+                                    
+                                   
 
-                                        </ul>
-                                       
                                     </li>
                                 </ul>
+                                
                             </div>
                         </div>
                         <!-- Cartt Box End -->
@@ -132,11 +147,31 @@
 </template>
 
 <script>
+import {BASE_URL} from "@/main";
 export default {
  data(){
     return{
-        cartVisible:true 
+        cartVisible:true,
+        items: this.$store.getters.getCartItems,
+        BASE_URL
     }
- }
+ },
+ computed: {
+    totalQuantity() {
+      return this.$store.getters.totalQuantity;
+    },
+    totalSum() {
+      return this.$store.getters.totalSum;
+    },
+  },
+
+  methods: {
+    deleteItem(item) {
+        this.$store.dispatch("deleteItemFromCart", { item });
+      console.log(`DELTE ${item}`);
+    },
+
+    
+  },
 }
 </script>

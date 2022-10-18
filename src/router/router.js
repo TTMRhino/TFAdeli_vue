@@ -3,6 +3,8 @@ import AboutPage from "@/pages/AboutPage"
 import ContactPage from "@/pages/ContactPage"
 import ShoptPage from "@/pages/ShopPage"
 import DetailPage from "@/pages/DetailPage"
+import CartPage from "@/pages/CartPage"
+import CheckOutPage from "@/pages/CheckOutPage"
 import { createRouter, createWebHistory } from 'vue-router'
 
 //Vue.use(VueRouter)
@@ -28,10 +30,21 @@ const routes = [{
         component: ShoptPage
     },
     {
+        path: '/cart',
+        name: 'CartPage',
+        component: CartPage
+    },
+    {
+        path: '/CheckOut',
+        name: 'CheckOutPage',
+        component: CheckOutPage
+    },
+    {
         path: '/detail/:id',
         name: 'DetailPage',
         component: DetailPage
     },
+
 ]
 const scrollBehavior = (to, from, savedPosition) => {
     return savedPosition || { top: 0, left: 0 }

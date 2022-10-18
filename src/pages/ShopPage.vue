@@ -7,7 +7,7 @@
    <div class="container">
        <div class="breadcrumb">
            <ul>
-               <li><a href="#">Главная</a></li>
+               <li><router-link to="/">Главная</router-link></li>
                <li class="active"><a href="#">Каталог</a></li>
            </ul>
        </div>
@@ -266,8 +266,9 @@ import GroupsMenu from "@/components/GroupsMenu.vue"
                         })
             },
 
-            addToCart: function(article){
-                console.log(`add to cart article ${article}`);
+            addToCart: function(item){
+                console.log(`add to cart article ${item}`);                
+                this.$store.dispatch("addToCart", { item });   
             },
 
             sortASC: function (){

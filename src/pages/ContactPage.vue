@@ -5,7 +5,7 @@
         <div class="container">
             <div class="breadcrumb">
                 <ul>
-                    <li><a href="{{ route('home')}}">Главная</a></li>
+                    <li><router-link to="/">Главная</router-link></li>
                     <li class="active"><a href="{{ route('contact')}}">Контакты</a></li>
                 </ul>
             </div>
