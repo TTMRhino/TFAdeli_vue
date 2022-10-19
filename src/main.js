@@ -10,6 +10,10 @@ import VueCookies from 'vue-cookies'
 export const BASE_URL = 'http://tfadeli-api.local/'
 export const URL = 'http://tfadeli-api.local/api/v1/'
 
+//export const BASE_URL = 'http://localhost:8081/'
+//export const URL = 'http://localhost:8081/api/v1/'
+
+
 const app = createApp(App)
 
 

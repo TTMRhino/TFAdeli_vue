@@ -30,7 +30,7 @@
     <!-- checkout-area start -->
     <div class="checkout-area pt-30  pb-60">
         <div class="container">        
-            <form action="#" method="POST"> 
+            <div > 
                
                 <div class="row">
                     <div class="col-lg-6 col-md-6">
@@ -50,10 +50,12 @@
                                     <div  class="checkout-form-list mtb-30" >
                                         
                                             <label>ФИО: <span class="required">*</span></label>
-                                            <input v-model="state.name" type="text"
-                                               
-                                               
+                                            <input 
+                                                v-model="state.name" 
+                                                type="text"
+                                                @blur="v$.name.$touch()"                                               
                                             >
+
                                             <div class="input-errors alert alert-danger" 
                                                 v-if="v$.name.$error"
                                             >
@@ -68,7 +70,8 @@
                                         <label>Адрес доставки: <span class="required">*</span></label>
                                         <input 
                                         name="adress" class="is-invalid"
-                                        v-model="state.adress"                                       
+                                        v-model="state.adress"
+                                        @blur="v$.adress.$touch()"                                       
                                         type="text" />
 
                                             <div class="input-errors alert alert-danger" 
@@ -92,6 +95,7 @@
                                         <input 
                                         name="city" class="is-invalid"
                                         v-model="state.city"
+                                        @blur="v$.city.$touch()" 
                                         type="text" placeholder="" />
 
                                         <div class="input-errors alert alert-danger" 
@@ -111,6 +115,7 @@
                                         <input 
                                         name="mailindex" class="is-invalid"
                                         v-model="state.mailindex"
+                                        @blur="v$.mailindex.$touch()" 
                                         type="text" placeholder="" />
 
                                         <div class="input-errors alert alert-danger" 
@@ -129,6 +134,7 @@
                                         <input 
                                         name="email" class="is-invalid"
                                         v-model="state.email"
+                                        @blur="v$.email.$touch()" 
                                         type="email" placeholder="" />
 
                                         <div class="input-errors alert alert-danger" 
@@ -147,6 +153,7 @@
                                         <input 
                                         name="phone" class="is-invalid"
                                         v-model="state.phone"
+                                        @blur="v$.phone.$touch()" 
                                         type="text" placeholder="" />
 
                                         <div class="input-errors alert alert-danger" 
@@ -218,7 +225,10 @@
                             <div class="payment-method">
                                 <div class="payment-accordion">
                                     <div class="order-button-payment">
-                                        <input type="submit" @click="submit" value="Оформить заказ" />
+                                        <input type="submit" 
+                                        @click="submit"
+                                       
+                                        value="Оформить заказ" />
                                     </div>
                                 </div>
                             </div>
@@ -226,7 +236,7 @@
                 
                     </div>
                 </div>
-            </form>   
+            </div>   
         </div>
     </div>
     <!-- checkout-area end -->
@@ -235,10 +245,11 @@
 </template>
 
 <script >
-import {BASE_URL} from "@/main";
+import {URL} from "@/main";
 import { useVuelidate } from '@vuelidate/core'
 import { required, email,maxLength,minLength } from '@vuelidate/validators'
 import {reactive, computed} from 'vue'
+import axios from 'axios'
 export default ({
     setup(){
         const state =reactive({
@@ -278,6 +289,7 @@ export default ({
                     maxLength:maxLength(10)
                 },
                 phone:{
+                    required, 
                     minLength:minLength(5),
                     maxLength:maxLength(18)
                 },
@@ -298,7 +310,7 @@ export default ({
     data() {
        return{
             items: this.$store.getters.getCartItems,
-            BASE_URL,
+            URL,
                      
        } 
     },
@@ -310,11 +322,63 @@ export default ({
           this.v$.$validate()
 
           if(!this.v$.$error){
+
+            console.log("SET ORDER")
+            
+            let customer ={}
+            customer.name = this.state.name
+            customer.phone = this.state.phone
+            customer.adress = this.state.adress
+            customer.email = this.state.email
+            customer.mailindex = this.state.mailindex
+            customer.city = this.state.city
+
+            
+            console.log(customer)
+            axios.put('http://tfadeli-api.local/api/v1/customers/put', customer)
+                .then(res => {
+                    this.postOrder(res.data.id)
+                })
+                .catch(err =>{
+                    console.log('ERROR!!!', err)
+                })
+            
+
             alert("Success!")
           }else{
             alert("Feild")
           }
+        },
+        postOrder(customerId){
+            console.log(`CUSTOMER ID = ${customerId}`)
+
+           
+            
+            let order ={}
+
+            this.items.map(item =>{
+                order ={
+                    name: item.name,
+                    item_id: item.id,
+                    quantity: item.quantity,
+                    customers_id: customerId,
+                    price:item.price,
+                    total: item.price * item.quantity
+                }
+                    console.log(order)
+
+                axios.put('http://tfadeli-api.local/api/v1/orders/put', order)
+                    .then(() => {
+                        //clearCart
+                      this.$store.dispatch('clearCart')
+                      //this.$router.push('/orderdone')
+                    })
+                    .catch(err =>{
+                        console.log('ERROR!!!', err)
+                    })
+            })
         }
+        
     },
     computed: {
         totalQuantity() {
