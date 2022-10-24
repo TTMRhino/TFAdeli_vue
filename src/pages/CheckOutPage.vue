@@ -283,7 +283,7 @@ export default ({
                     required, 
                     email,
                     minLength:minLength(5),
-                    maxLength:maxLength(25) 
+                    maxLength:maxLength(40) 
                 } ,
                 mailindex:{
                     maxLength:maxLength(10)
@@ -337,7 +337,9 @@ export default ({
             console.log(customer)
             axios.put('http://tfadeli-api.local/api/v1/customers/put', customer)
                 .then(res => {
-                    this.postOrder(res.data.id)
+                    console.log(`Вываливаем содержимое ответа!`)
+                    console.log(res)
+                    this.postOrder(res.data.data.id)
                 })
                 .catch(err =>{
                     console.log('ERROR!!!', err)
